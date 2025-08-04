@@ -13,10 +13,33 @@ if (!fs.existsSync(dataDir)) {
 
 const db = new sqlite3.Database(dbPath);
 
-// Promisificar métodos de la base de datos
-export const dbRun = promisify(db.run.bind(db));
-export const dbGet = promisify(db.get.bind(db));
-export const dbAll = promisify(db.all.bind(db));
+// Promisificar métodos de la base de datos con tipos correctos
+export const dbRun = (sql: string, params?: any[]): Promise<sqlite3.RunResult> => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params || [], function(err) {
+      if (err) reject(err);
+      else resolve(this);
+    });
+  });
+};
+
+export const dbGet = (sql: string, params?: any[]): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params || [], (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+};
+
+export const dbAll = (sql: string, params?: any[]): Promise<any[]> => {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params || [], (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+};
 
 export const initDatabase = async () => {
   try {

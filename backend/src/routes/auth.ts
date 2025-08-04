@@ -7,6 +7,16 @@ import { dbRun, dbGet } from '../database/init';
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'financiall-secret-key';
 
+// Interfaz para el usuario
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // Registro de usuario
 router.post('/register', async (req, res) => {
   try {
@@ -95,7 +105,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Buscar usuario
-    const user = await dbGet('SELECT * FROM users WHERE email = ?', [email]);
+    const user = await dbGet('SELECT * FROM users WHERE email = ?', [email]) as User;
     if (!user) {
       return res.status(401).json({ error: 'Email o contraseña incorrectos' });
     }
@@ -130,7 +140,7 @@ router.get('/verify', async (req, res) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
-    const user = await dbGet('SELECT id, name, email FROM users WHERE id = ?', [decoded.userId]);
+    const user = await dbGet('SELECT id, name, email FROM users WHERE id = ?', [decoded.userId]) as User;
     
     if (!user) {
       return res.status(401).json({ error: 'Usuario no encontrado' });
