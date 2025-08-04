@@ -35,6 +35,7 @@ export interface Investment {
   currentPrice: number;
   currency: string;
   purchaseDate: string;
+  entityId?: string;
   createdAt: string;
 }
 

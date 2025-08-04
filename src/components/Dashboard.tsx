@@ -381,7 +381,7 @@ const Dashboard: React.FC = () => {
         <div className="card bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Próximos Cobros</p>
+              <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Ingresos</p>
               <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
                 {formatCurrency(totalIncome)}
               </p>
@@ -398,7 +398,7 @@ const Dashboard: React.FC = () => {
         <div className="card bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Próximos Pagos</p>
+              <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Pagos</p>
               <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
                 {formatCurrency(totalExpenses)}
               </p>

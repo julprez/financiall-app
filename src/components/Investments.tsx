@@ -21,6 +21,7 @@ const Investments: React.FC = () => {
   const {
     currencies,
     baseCurrency,
+    entities,
     addInvestment,
     updateInvestment,
     deleteInvestment,
@@ -59,6 +60,7 @@ const Investments: React.FC = () => {
     currentPrice: '',
     currency: baseCurrency,
     purchaseDate: format(new Date(), 'yyyy-MM-dd'),
+    entityId: '',
   });
   
   const baseCurrencySymbol = currencies.find(c => c.code === baseCurrency)?.symbol || '€';
@@ -105,6 +107,7 @@ const Investments: React.FC = () => {
       currentPrice: parseFloat(formData.currentPrice),
       currency: formData.currency,
       purchaseDate: formData.purchaseDate,
+      entityId: formData.entityId,
       userId: currentUser?.id || '',
     };
     
@@ -124,6 +127,7 @@ const Investments: React.FC = () => {
       currentPrice: '',
       currency: baseCurrency,
       purchaseDate: format(new Date(), 'yyyy-MM-dd'),
+      entityId: '',
     });
     setShowForm(false);
   };
@@ -217,6 +221,7 @@ const Investments: React.FC = () => {
       currentPrice: investment.currentPrice.toString(),
       currency: investment.currency,
       purchaseDate: format(new Date(investment.purchaseDate), 'yyyy-MM-dd'),
+      entityId: investment.entityId || '',
     });
     setShowForm(true);
   };
@@ -666,6 +671,24 @@ const Investments: React.FC = () => {
                     className="input-field"
                     required
                   />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Entidad
+                  </label>
+                  <select
+                    value={formData.entityId}
+                    onChange={(e) => setFormData({ ...formData, entityId: e.target.value })}
+                    className="input-field"
+                  >
+                    <option value="">Seleccionar entidad</option>
+                    {entities.map(entity => (
+                      <option key={entity.id} value={entity.id}>
+                        {entity.name} ({entity.type})
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 
                 <div className="flex justify-end space-x-3 pt-4">
