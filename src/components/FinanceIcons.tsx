@@ -108,19 +108,22 @@ export const EntertainmentIcon: React.FC<IconProps> = ({ className = '', size = 
   </IconWrapper>
 );
 
-// Mapa de iconos disponibles
+// Mapa de iconos optimizado - SIN duplicados
 export const FINANCE_ICONS = {
+  // Iconos financieros principales
   bank: BankIcon,
   creditCard: CreditCardIcon,
   wallet: WalletIcon,
   investment: InvestmentIcon,
   salary: SalaryIcon,
+  
+  // Categorías principales (sin duplicados)
   shopping: ShoppingIcon,
   food: FoodIcon,
   transport: TransportIcon,
   home: HomeIcon,
   health: HealthIcon,
-  entertainment: EntertainmentIcon,
+  entertainment: EntertainmentIcon
 } as const;
 
 export type FinanceIconType = keyof typeof FINANCE_ICONS;

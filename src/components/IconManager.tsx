@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Upload, X, Check, Image, Trash2 } from 'lucide-react';
 import { FinanceIcon, FINANCE_ICONS, FinanceIconType } from './FinanceIcons';
 
@@ -7,6 +7,7 @@ interface CustomIcon {
   name: string;
   url: string;
   file?: File;
+  isCustom?: boolean;
 }
 
 interface IconManagerProps {
@@ -17,6 +18,7 @@ interface IconManagerProps {
 const IconManager: React.FC<IconManagerProps> = ({ onIconSelect, selectedIcon }) => {
   const [customIcons, setCustomIcons] = useState<CustomIcon[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Cargar iconos guardados del localStorage al montar el componente
@@ -62,7 +64,8 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconSelect, selectedIcon })
         id: Date.now().toString() + i,
         name: iconName,
         url: url,
-        file: file
+        file: file,
+        isCustom: true
       };
 
       setCustomIcons(prev => {
@@ -87,8 +90,24 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconSelect, selectedIcon })
     });
   };
 
-  // Iconos predefinidos del sistema - usar las claves reales de FINANCE_ICONS
+  // Iconos predefinidos del sistema organizados por categorías
+  const iconCategories = {
+    'Transporte': ['car', 'bus', 'train', 'plane', 'gas'],
+    'Alimentación': ['restaurant', 'coffee', 'grocery', 'pizza'],
+    'Entretenimiento': ['movie', 'music', 'game', 'book'],
+    'Salud': ['hospital', 'pharmacy', 'fitness'],
+    'Servicios': ['internet', 'phone', 'electricity', 'water'],
+    'Finanzas': ['bank', 'investment', 'salary', 'wallet']
+  };
+
   const systemIcons = Object.keys(FINANCE_ICONS) as FinanceIconType[];
+
+  const filteredIcons = useMemo(() => {
+    if (!searchTerm) return systemIcons;
+    return systemIcons.filter(icon => 
+      icon.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, systemIcons]);
 
   return (
     <div className="space-y-4">
@@ -120,61 +139,60 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconSelect, selectedIcon })
         </div>
       </div>
 
-      {/* Iconos del sistema */}
+      {/* Iconos del sistema - CENTRADO MEJORADO */}
       <div>
         <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
           Iconos del Sistema
         </h4>
-        <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2">
+        <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3">
           {systemIcons.map((iconName) => (
             <button
               key={iconName}
               onClick={() => onIconSelect(iconName)}
-              className={`p-3 rounded-lg border-2 transition-all hover:scale-105 ${
+              className={`aspect-square p-2 rounded-xl border-2 transition-all duration-200 hover:scale-105 hover:shadow-md flex items-center justify-center ${
                 selectedIcon === iconName
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-blue-300'
               }`}
               title={iconName}
             >
-              <div className="w-6 h-6 mx-auto flex items-center justify-center">
-                <FinanceIcon 
-                  type={iconName} 
-                  className="w-5 h-5 text-gray-600 dark:text-gray-300" 
-                />
-              </div>
+              <FinanceIcon 
+                type={iconName} 
+                className="w-8 h-8" 
+                size={32}
+              />
             </button>
           ))}
         </div>
       </div>
 
-      {/* Iconos personalizados */}
+      {/* Iconos personalizados - CENTRADO MEJORADO */}
       {customIcons.length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Iconos Personalizados
           </h4>
-          <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2">
+          <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3">
             {customIcons.map((icon) => (
               <div key={icon.id} className="relative group">
                 <button
                   onClick={() => onIconSelect(icon.name)}
-                  className={`w-full p-3 rounded-lg border-2 transition-all hover:scale-105 ${
+                  className={`w-full aspect-square p-2 rounded-xl border-2 transition-all duration-200 hover:scale-105 hover:shadow-md flex items-center justify-center ${
                     selectedIcon === icon.name
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-600 hover:border-gray-300'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
+                      : 'border-gray-200 dark:border-gray-600 hover:border-blue-300'
                   }`}
                   title={icon.name}
                 >
                   <img
                     src={icon.url}
                     alt={icon.name}
-                    className="w-6 h-6 mx-auto object-contain"
+                    className="w-8 h-8 object-contain"
                   />
                 </button>
                 <button
                   onClick={() => removeIcon(icon.id)}
-                  className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                  className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center hover:bg-red-600 shadow-lg"
                 >
                   <X className="w-3 h-3" />
                 </button>
