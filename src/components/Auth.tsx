@@ -61,9 +61,18 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
           setErrors({ general: 'Email o contraseña incorrectos' });
         }
       } else {
-        success = await registerWithAPI(formData.name, formData.email, formData.password);
-        if (!success) {
-          setErrors({ general: 'Error al crear la cuenta. Inténtalo de nuevo.' });
+        try {
+          success = await registerWithAPI(formData.name, formData.email, formData.password);
+        } catch (error: any) {
+          // Mostrar error específico del servidor
+          if (error.message.includes('ya está registrado')) {
+            setErrors({ general: 'Este email ya está registrado. Intenta iniciar sesión.' });
+          } else if (error.message.includes('conexión')) {
+            setErrors({ general: 'Error de conexión. Verifica tu conexión a internet.' });
+          } else {
+            setErrors({ general: error.message || 'Error al crear la cuenta. Inténtalo de nuevo.' });
+          }
+          return;
         }
       }
       

@@ -179,20 +179,27 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api
 const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('authToken');
   
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    },
-    ...options,
-  });
-  
-  if (!response.ok) {
-    throw new Error(`API call failed: ${response.statusText}`);
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...options.headers,
+      },
+      ...options,
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || `API call failed: ${response.statusText}`);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
   }
-  
-  return response.json();
 };
 
 export const useFinanceStore = create<FinanceState>()(persist(
@@ -250,9 +257,10 @@ export const useFinanceStore = create<FinanceState>()(persist(
         // Sync data after registration
         await get().syncWithAPI();
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error('Registration failed:', error);
-        return false;
+        // Propagar el error específico para mejor UX
+        throw new Error(error.message || 'Error al crear la cuenta');
       }
     },
     
