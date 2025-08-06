@@ -4,9 +4,7 @@ import {
   Plus, 
   Edit, 
   Trash2, 
-  Palette,
   Globe,
-  CreditCard,
   Building,
   Tag,
   Save,
@@ -103,8 +101,6 @@ const SettingsPanel: React.FC = () => {
 
   const handleAddCategory = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Editing category:', editingCategory);
-    console.log('Form data:', categoryForm);
     
     if (editingCategory) {
       updateCategory(editingCategory.id, categoryForm);
@@ -115,7 +111,7 @@ const SettingsPanel: React.FC = () => {
         userId: currentUser?.id || ''
       });
     }
-    setCategoryForm({ name: '', type: 'expense', color: '#3b82f6', icon: 'Tag' });
+    setCategoryForm({ name: '', type: 'expense', color: '#3b82f6', icon: 'wallet' });
     setShowCategoryForm(false);
   };
 
